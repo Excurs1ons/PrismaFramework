@@ -1,10 +1,10 @@
 # PrismaFramework
 
-Unity URP 2D 游戏开发模板项目。
+Unity URP 游戏开发模板项目。
 
 ## 技术栈
 
-- **Unity 2022.3** + **URP 2D**
+- **Unity 6** + **URP**
 - **VContainer** - 依赖注入
 - **UniTask** - 异步任务
 - **ZLogger** - 日志系统
