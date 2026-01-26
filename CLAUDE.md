@@ -68,13 +68,13 @@ private static ILoggerFactory CreateLogFactory()
 // 注册为单例
 builder.RegisterInstance(CreateLogFactory());
 
-// 使用
+// 使用 - 注入 ILoggerFactory 并创建 logger
 public class GameBootstrapper
 {
     private readonly ILogger _logger;
-    public GameBootstrapper(ILogger<GameBootstrapper> logger)
+    public GameBootstrapper(ILoggerFactory loggerFactory)
     {
-        _logger = logger;
+        _logger = loggerFactory.CreateLogger<GameBootstrapper>();
         _logger.LogInformation("Game Framework Starting...");
     }
 }
@@ -95,8 +95,11 @@ public class GameBootstrapper
 使用 **NuGetForUnity** 管理包：
 
 - 配置文件: `Assets/NuGet.config`
+- 包列表: `Assets/packages.config`
 - 包安装位置: `Assets/Packages/` (自定义位置)
 - 程序集引用: 在 `.asmdef` 中配置 `precompiledReferences`
+
+**首次克隆项目后**，需要在 Unity 编辑器中打开 NuGetForUnity 窗口并点击 "Restore" 来下载 NuGet 包的 DLL 文件（DLL 文件被 .gitignore 忽略，不在版本控制中）。
 
 ## 代码约定
 
