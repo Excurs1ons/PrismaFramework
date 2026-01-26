@@ -3,7 +3,8 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using ZLogger.Unity;
-using GameLauncher.Boot;
+using MessagePipe;
+using MessagePipe.VContainer;
 namespace GameLauncher.Boot
 {
     public class RootLifetimeScope : LifetimeScope
@@ -18,9 +19,9 @@ namespace GameLauncher.Boot
 
             // === MessagePipe: 事件总线 ===
             // 为什么: 类型安全的发布订阅，解耦组件间通信
-            // 注册所有事件类型的 ISubscriber<T> 和 IPublisher<T>
-            builder.RegisterMessageBroker<GameEvent>();
-            builder.RegisterMessageBroker<PlayerEvent>();
+            var options = builder.RegisterMessagePipe();
+            builder.RegisterMessageBroker<GameEvent>(options);
+            builder.RegisterMessageBroker<PlayerEvent>(options);
 
             // === 游戏启动入口 ===
             builder.RegisterEntryPoint<GameBootstrapper>();

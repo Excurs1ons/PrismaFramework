@@ -7,8 +7,6 @@ using Cysharp.Threading.Tasks.Triggers;
 using System.Threading;
 using MessagePipe;
 using Cysharp.Text;
-using Cysharp.Threading.Tasks;
-using Ulid;
 
 namespace GameLauncher.Boot
 {
@@ -18,7 +16,7 @@ namespace GameLauncher.Boot
 
     public class GameBootstrapper : IAsyncStartable
     {
-        private readonly ILogger _logger;
+        private readonly Microsoft.Extensions.Logging.ILogger _logger;
         private readonly ISubscriber<GameEvent> _gameEventSub;
         private readonly ISubscriber<PlayerEvent> _playerEventSub;
         private readonly IPublisher<GameEvent> _gameEventPub;
@@ -71,26 +69,30 @@ namespace GameLauncher.Boot
 
             // === ULID: 唯一标识符 ===
             // 为什么: 有序且唯一的 ID，替代 GUID，更适合分布式系统
-            var playerId = Ulid.NewUlid();
+            var playerId = System.Ulid.NewUlid();
             _logger.LogInformation("生成玩家 ULID: {Ulid}", playerId.ToString());
 
-            _logger.LogInformation("所有系统初始化完毕，进入游戏主场景");
+            // === UniTask: 倒数 3 秒 ===
+            _logger.LogInformation("所有系统初始化完毕，3 秒后进入游戏主场景...");
+            for (int i = 3; i > 0; i--)
+            {
+                _logger.LogInformation("{i}...", i);
+                await UniTask.Delay(1000, cancellationToken: cancellation);
+            }
+
             await SceneManager.LoadSceneAsync(1).ToUniTask(cancellationToken: cancellation);
         }
 
         private async UniTask DemoUniTask(CancellationToken cancellationToken)
         {
             // UniTask 支持标准的 await 模式
-            await UniTask.Delay(100, cancellationToken);
-
-            // 可以直接等待 GameObject 组件
-            // await gameObject.OnDestroyAsync(cancellationToken);
+            await UniTask.Delay(100, cancellationToken: cancellationToken);
 
             // 支持基于帧的延迟
-            await UniTask.DelayFrame(10, cancellationToken);
+            await UniTask.DelayFrame(10, cancellationToken: cancellationToken);
 
-            // 支持 WaitForSeconds 替代
-            await UniTask.Yield(cancellationToken);
+            // Yield 到下一帧
+            await UniTask.Yield();
         }
     }
 }
