@@ -16,22 +16,22 @@
         "com.cysharp.unitask",
         "com.cysharp.zlinq",
         "com.cysharp.zlogger",
-        "com.cysharp.zstring"
+        "com.cysharp.zstring",
+        "jp.hadashikick.vcontainer"
       ]
     }
   ],
   "dependencies": {
+
     "com.code-philosophy.hybridclr": "8.9.0",
     "com.code-philosophy.luban": "1.1.1",
-    "com.cysharp.memorypack": "1.21.4",
+    "com.github-glitchenzo.nugetforunity": "4.5.0",
     "com.cysharp.messagepipe": "1.8.1",
     "com.cysharp.messagepipe.vcontainer": "1.8.1",
     "com.cysharp.observablecollections": "1.1.3",
-    "com.cysharp.r3": "1.3.0",
+    
     "com.cysharp.ulid": "1.4.1",
     "com.cysharp.unitask": "2.5.10",
-    "com.cysharp.zlinq": "1.5.4",
-    "com.cysharp.zlogger": "2.5.10",
     "com.cysharp.zstring": "2.6.0",
     "com.unity.2d.animation": "13.0.2",
     "com.unity.2d.aseprite": "3.0.1",
