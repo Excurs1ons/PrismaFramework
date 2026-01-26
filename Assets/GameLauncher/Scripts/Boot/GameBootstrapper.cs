@@ -31,7 +31,7 @@ namespace GameLauncher.Boot
             _logger.LogInformation("所有系统初始化完毕，进入游戏主场景");
             // 注意：这里使用 YooAsset 加载场景，而不是 SceneManager
             // await _assetProvider.LoadSceneAsync("MainMenu");
-            await SceneManager.LoadSceneAsync("MainMenu").ToUniTask(cancellationToken: cancellation);
+            await SceneManager.LoadSceneAsync(1).ToUniTask(cancellationToken: cancellation);
         }
     }
 }

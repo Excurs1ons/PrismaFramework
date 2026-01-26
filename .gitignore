@@ -29,11 +29,9 @@
 *.userosscache
 *.sln.docstates
 
-# NuGetForUnity 下载的 DLL（保留配置文件）
-Assets/Packages/**/*.dll
-Assets/Packages/**/*.pdb
-!Assets/Packages/**/*.md
-!Assets/Packages/**/*.PACKAGE.md
+# NuGetForUnity 下载的 DLL
+Assets/Packages/
 
 # 其他
 .DS_Store
+[Uu]serSettings/
