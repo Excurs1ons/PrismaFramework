@@ -12,8 +12,9 @@ namespace GameLauncher.Boot
         
         protected override void Configure(IContainerBuilder builder)
         {
-            // 1. 注册日志 (ZLogger)
-            builder.RegisterInstance(CreateLogFactory()); 
+            // 1. 注册日志工厂 (ZLogger)
+            // 需要日志的类通过注入 ILoggerFactory，然后调用 CreateLogger<T>() 创建 logger
+            builder.RegisterInstance(CreateLogFactory());
 
             // 2. 注册资源管理 (YooAsset 包装器)
             //builder.Register<IAssetProvider, YooAssetProvider>(Lifetime.Singleton);
