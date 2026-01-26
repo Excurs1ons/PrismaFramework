@@ -1,0 +1,39 @@
+# Unity 特有
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+
+# 自动生成的文件
+*.csproj
+*.sln
+*.sln.meta
+*.user
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# IDE
+.idea/
+.vs/
+*.vsidx
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGetForUnity 下载的 DLL（保留配置文件）
+Assets/Packages/**/*.dll
+Assets/Packages/**/*.pdb
+!Assets/Packages/**/*.md
+!Assets/Packages/**/*.PACKAGE.md
+
+# 其他
+.DS_Store
