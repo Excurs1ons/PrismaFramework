@@ -1,37 +1,96 @@
 ﻿using Cysharp.Threading.Tasks;
 using VContainer.Unity;
 using Microsoft.Extensions.Logging;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using Cysharp.Threading.Tasks.Triggers;
+using System.Threading;
+using MessagePipe;
+using Cysharp.Text;
+using Cysharp.Threading.Tasks;
+using Ulid;
+
 namespace GameLauncher.Boot
 {
-    public class GameBootstrapper: IAsyncStartable
+    // 演示事件定义
+    public class GameEvent { }
+    public class PlayerEvent { public int Id; public string Name; }
+
+    public class GameBootstrapper : IAsyncStartable
     {
         private readonly ILogger _logger;
-        // private readonly IAssetProvider _assetProvider;
+        private readonly ISubscriber<GameEvent> _gameEventSub;
+        private readonly ISubscriber<PlayerEvent> _playerEventSub;
+        private readonly IPublisher<GameEvent> _gameEventPub;
+        private readonly IPublisher<PlayerEvent> _playerEventPub;
+        private readonly DisposableBagBuilder _disposables;
 
-        // VContainer自动注入依赖
-        public GameBootstrapper(ILoggerFactory loggerFactory)
+        // === VContainer: 依赖注入 ===
+        // 为什么: 解耦组件依赖，便于测试和维护
+        public GameBootstrapper(
+            ILoggerFactory loggerFactory,
+            ISubscriber<GameEvent> gameEventSub,
+            ISubscriber<PlayerEvent> playerEventSub,
+            IPublisher<GameEvent> gameEventPub,
+            IPublisher<PlayerEvent> playerEventPub)
         {
             _logger = loggerFactory.CreateLogger<GameBootstrapper>();
+            _gameEventSub = gameEventSub;
+            _playerEventSub = playerEventSub;
+            _gameEventPub = gameEventPub;
+            _playerEventPub = playerEventPub;
+            _disposables = DisposableBag.CreateBuilder();
+
+            // === MessagePipe: 订阅事件 ===
+            // 为什么: 类型安全的事件总线，替代 C# 委托/事件，支持过滤和异步处理
+            _gameEventSub.Subscribe(e => _logger.LogInformation("收到 GameEvent")).AddTo(_disposables);
+            _playerEventSub.Subscribe(e => _logger.LogInformation("收到 PlayerEvent: Id={Id}, Name={Name}", e.Id, e.Name)).AddTo(_disposables);
         }
-        public async UniTask StartAsync(System.Threading.CancellationToken cancellation)
+
+        public async UniTask StartAsync(CancellationToken cancellation)
         {
-            _logger.LogInformation("开始启动游戏...");
+            // === ZLogger: 结构化日志 ===
+            // 为什么: 零分配、高性能，支持结构化日志输出
+            _logger.LogInformation("=== PrismaFramework 演示 ===");
 
-            // 1. 初始化资源系统 (YooAsset)
-            // await _assetProvider.InitializeAsync();
-        
-            // 2. (如果是HybridCLR) 可以在这里下载 HotUpdate.dll 并 LoadMetadataForAOTAssembly
-            // await DownloadAndLoadHotfixAssemblies();
+            // === UniTask: 异步操作 ===
+            // 为什么: 替代 Coroutine，提供真正的 async/await 体验，性能更好
+            await DemoUniTask(cancellation);
 
-            // 3. 加载配置表 (Luban)
-            // await LoadConfigsAsync();
+            // === MessagePipe: 发布事件 ===
+            _gameEventPub.Publish(new GameEvent());
+            _playerEventPub.Publish(new PlayerEvent { Id = 1, Name = "Player1" });
 
-            // 4. 进入游戏主场景
+            // === ZString: 高性能字符串 ===
+            // 为什么: 零分配字符串拼接，避免 GC 压力
+            using (var sb = ZString.CreateStringBuilder())
+            {
+                sb.AppendFormat("玩家 {0} 进入游戏，等级 {1}", "Player1", 10);
+                _logger.LogInformation(sb.ToString());
+            }
+
+            // === ULID: 唯一标识符 ===
+            // 为什么: 有序且唯一的 ID，替代 GUID，更适合分布式系统
+            var playerId = Ulid.NewUlid();
+            _logger.LogInformation("生成玩家 ULID: {Ulid}", playerId.ToString());
+
             _logger.LogInformation("所有系统初始化完毕，进入游戏主场景");
-            // 注意：这里使用 YooAsset 加载场景，而不是 SceneManager
-            // await _assetProvider.LoadSceneAsync("MainMenu");
             await SceneManager.LoadSceneAsync(1).ToUniTask(cancellationToken: cancellation);
+        }
+
+        private async UniTask DemoUniTask(CancellationToken cancellationToken)
+        {
+            // UniTask 支持标准的 await 模式
+            await UniTask.Delay(100, cancellationToken);
+
+            // 可以直接等待 GameObject 组件
+            // await gameObject.OnDestroyAsync(cancellationToken);
+
+            // 支持基于帧的延迟
+            await UniTask.DelayFrame(10, cancellationToken);
+
+            // 支持 WaitForSeconds 替代
+            await UniTask.Yield(cancellationToken);
         }
     }
 }

@@ -3,37 +3,35 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using ZLogger.Unity;
+using GameLauncher.Boot;
 namespace GameLauncher.Boot
 {
     public class RootLifetimeScope : LifetimeScope
     {
-        // 一个ScriptableObject配置，包含一些其他的ScriptableObject配置，每一个都需要支持热更
         [SerializeField] private GameConfig settings;
-        
+
         protected override void Configure(IContainerBuilder builder)
         {
-            // 1. 注册日志工厂 (ZLogger)
-            // 需要日志的类通过注入 ILoggerFactory，然后调用 CreateLogger<T>() 创建 logger
+            // === ZLogger: 日志工厂 ===
+            // 为什么: 零分配结构化日志，支持 LogLevel 过滤
             builder.RegisterInstance(CreateLogFactory());
 
-            // 2. 注册资源管理 (YooAsset 包装器)
-            //builder.Register<IAssetProvider, YooAssetProvider>(Lifetime.Singleton);
+            // === MessagePipe: 事件总线 ===
+            // 为什么: 类型安全的发布订阅，解耦组件间通信
+            // 注册所有事件类型的 ISubscriber<T> 和 IPublisher<T>
+            builder.RegisterMessageBroker<GameEvent>();
+            builder.RegisterMessageBroker<PlayerEvent>();
 
-            // 3. 注册网络/配置服务
-            // builder.Register<INetworkService, KcpNetworkService>(Lifetime.Singleton);
-            // builder.Register<IConfigService, LubanConfigService>(Lifetime.Singleton);
-
-            // 4. 注册游戏流程入口 (EntryPoint)
-            // 这是一个纯 C# 类，继承 IAsyncStartable，是游戏的"Main函数"
+            // === 游戏启动入口 ===
             builder.RegisterEntryPoint<GameBootstrapper>();
         }
+
         private static ILoggerFactory CreateLogFactory()
         {
-            // 配置 ZLogger，使用 ZString 格式化
             return LoggerFactory.Create(logging =>
             {
                 logging.SetMinimumLevel(LogLevel.Trace);
-                logging.AddZLoggerUnityDebug(); // 输出到 Unity Console
+                logging.AddZLoggerUnityDebug();
             });
         }
     }
