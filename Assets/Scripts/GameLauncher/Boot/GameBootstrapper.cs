@@ -8,7 +8,7 @@ using System.Threading;
 using MessagePipe;
 using Cysharp.Text;
 
-namespace GameLauncher.Boot
+namespace Boot
 {
     // 演示事件定义
     public class GameEvent { }
