@@ -9,11 +9,13 @@
         "com.code-philosophy.hybridclr",
         "com.code-philosophy.luban",
         "com.cysharp",
-        "jp.hadashikick.vcontainer"
+        "jp.hadashikick.vcontainer",
+        "com.browar.editor-toolbox"
       ]
     }
   ],
   "dependencies": {
+    "com.browar.editor-toolbox": "0.14.3",
     "com.code-philosophy.luban": "1.1.1",
     "com.cysharp.messagepipe": "1.8.1",
     "com.cysharp.messagepipe.vcontainer": "1.8.1",

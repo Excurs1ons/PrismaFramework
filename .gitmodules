@@ -1,0 +1,3 @@
+[submodule "Assets/ThirdParty/Runtime/graphy-rev"]
+	path = Assets/ThirdParty/Runtime/graphy-rev
+	url = https://github.com/Excurs1ons/graphy-rev.git
