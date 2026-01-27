@@ -69,10 +69,12 @@ namespace PrismaFramework.GameLauncher.Localization
 
         // 使用 LateUpdate 确保在一帧内无论 SetKey/SetArgs 被调用多少次
         // String.Format 和 GetText 只会执行一次 (Batching)
+        // 相当于帧内批处理，不要分帧，会导致多次Canvas重绘
+        // 长痛不如短痛
         private void LateUpdate()
         {
             if (!isDirty) return;
-            if (_locService == null) return; // 防御未注入
+            if (_locService == null) return; // 防止未注入
             if (string.IsNullOrEmpty(currentKey)) return;
 
             RefreshText();
