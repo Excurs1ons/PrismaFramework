@@ -1,13 +1,14 @@
 ﻿using TMPro;
 using VContainer;
 using R3;
+using UnityEngine;
 
 namespace PrismaFramework.GameLauncher.Localization
 {
     public class LocalizedTMPText : Localized
     {
         // === 依赖 ===
-        private TMP_Text _targetText;
+        [SerializeField] private TMP_Text _targetText;
 
         private ILocalizationService _locService;
 
@@ -17,7 +18,7 @@ namespace PrismaFramework.GameLauncher.Localization
         {
             _locService = locService;
 
-            // 关键机制：监听全局 Revision
+            // 监听全局 Revision
             // 当语言切换时，无需广播，只要把自己标记为脏，下一帧 LateUpdate 自动刷新
             _locService.Revision
                 .Subscribe(_ => MarkDirty())
