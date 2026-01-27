@@ -1,9 +1,11 @@
 ﻿using System.Threading;
 using Cysharp.Text;
 using Cysharp.Threading.Tasks;
+using JetBrains.Annotations;
 using MessagePipe;
 using Microsoft.Extensions.Logging;
 using UnityEngine.SceneManagement;
+using VContainer;
 using VContainer.Unity;
 
 namespace PrismaFramework.GameLauncher.Boot
@@ -12,9 +14,14 @@ namespace PrismaFramework.GameLauncher.Boot
     public class GameEvent { }
     public class PlayerEvent { public int Id; public string Name; }
 
+    [UsedImplicitly]
     public class GameBootstrapper : IAsyncStartable
     {
-        private readonly Microsoft.Extensions.Logging.ILogger _logger;
+        private readonly ILogger _logger;
+
+        private readonly LifetimeScope _rootScope;
+        private readonly IAssetProvider _assetProvider;
+        
         private readonly ISubscriber<GameEvent> _gameEventSub;
         private readonly ISubscriber<PlayerEvent> _playerEventSub;
         private readonly IPublisher<GameEvent> _gameEventPub;
@@ -22,15 +29,21 @@ namespace PrismaFramework.GameLauncher.Boot
         private readonly DisposableBagBuilder _disposables;
 
         // === VContainer: 依赖注入 ===
-        // 为什么: 解耦组件依赖，便于测试和维护
-        public GameBootstrapper(
+        // 解耦组件依赖，便于测试和维护
+        public GameBootstrapper(LifetimeScope scope,
+            IAssetProvider assetProvider,
             ILoggerFactory loggerFactory,
             ISubscriber<GameEvent> gameEventSub,
             ISubscriber<PlayerEvent> playerEventSub,
             IPublisher<GameEvent> gameEventPub,
             IPublisher<PlayerEvent> playerEventPub)
         {
+            
             _logger = loggerFactory.CreateLogger<GameBootstrapper>();
+            
+            _rootScope = scope;
+            _assetProvider = assetProvider;
+            
             _gameEventSub = gameEventSub;
             _playerEventSub = playerEventSub;
             _gameEventPub = gameEventPub;
@@ -38,7 +51,7 @@ namespace PrismaFramework.GameLauncher.Boot
             _disposables = DisposableBag.CreateBuilder();
 
             // === MessagePipe: 订阅事件 ===
-            // 为什么: 类型安全的事件总线，替代 C# 委托/事件，支持过滤和异步处理
+            // 类型安全的事件总线，替代 C# 委托/事件，支持过滤和异步处理
             _gameEventSub.Subscribe(e => _logger.LogInformation("收到 GameEvent")).AddTo(_disposables);
             _playerEventSub.Subscribe(e => _logger.LogInformation("收到 PlayerEvent: Id={Id}, Name={Name}", e.Id, e.Name)).AddTo(_disposables);
         }
@@ -46,8 +59,8 @@ namespace PrismaFramework.GameLauncher.Boot
         public async UniTask StartAsync(CancellationToken cancellation)
         {
             // === ZLogger: 结构化日志 ===
-            // 为什么: 零分配、高性能，支持结构化日志输出
-            _logger.LogInformation("=== PrismaFramework 演示 ===");
+            // 零分配、高性能，支持结构化日志输出
+            _logger.LogInformation("=== PrismaFramework ===");
 
             // === UniTask: 异步操作 ===
             // 为什么: 替代 Coroutine，提供真正的 async/await 体验，性能更好
@@ -78,7 +91,15 @@ namespace PrismaFramework.GameLauncher.Boot
                 await UniTask.Delay(1000, cancellationToken: cancellation);
             }
 
+
+#if UNITY_EDITOR
+            // --- 编辑器模式：直接调用 ---
+            // 此时不需要加载 DLL，因为 GameMain 已经在当前的内存域里了
             await SceneManager.LoadSceneAsync(1).ToUniTask(cancellationToken: cancellation);
+            GameMain.Entry.Start(_rootScope);
+#else
+            // --- 运行时模式：加载 DLL ---
+#endif
         }
 
         private async UniTask DemoUniTask(CancellationToken cancellationToken)
