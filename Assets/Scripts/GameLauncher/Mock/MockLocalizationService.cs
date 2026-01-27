@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using PrismaFramework.GameLauncher.Localization;
 using PrismaFramework.GameLauncher.UI;
+using R3;
 
 namespace PrismaFramework.GameLauncher.Mock
 {
@@ -16,7 +17,15 @@ namespace PrismaFramework.GameLauncher.Mock
             { "DL_ING", "正在下载资源... {0}%" },
             { "DL_DONE", "下载完成！" },
         };
+        
 
+        // 模拟切换语言
+        public void SwitchLanguage()
+        {
+            _revision.Value++; // 版本号 +1，所有 UI 组件会感知到这个数字变了
+        }
+        public ReadOnlyReactiveProperty<int> Revision => _revision;
+        private readonly ReactiveProperty<int> _revision = new(0);
 
         public string GetText(string key, params object[] args)
         {
