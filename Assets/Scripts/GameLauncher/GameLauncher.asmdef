@@ -1,5 +1,6 @@
 {
     "name": "GameLauncher",
+    "rootNamespace": "PrismaFramework",
     "references": [
         "GUID:f51ebe6a0ceec4240a699833d6309b23",
         "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
@@ -18,7 +19,7 @@
         "Microsoft.Extensions.Logging.dll",
         "ZLogger.dll"
     ],
-    "autoReferenced": false,
+    "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false

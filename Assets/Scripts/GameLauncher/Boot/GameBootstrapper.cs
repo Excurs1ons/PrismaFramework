@@ -1,14 +1,12 @@
-﻿using Cysharp.Threading.Tasks;
-using VContainer.Unity;
-using Microsoft.Extensions.Logging;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using Cysharp.Threading.Tasks.Triggers;
-using System.Threading;
-using MessagePipe;
+﻿using System.Threading;
 using Cysharp.Text;
+using Cysharp.Threading.Tasks;
+using MessagePipe;
+using Microsoft.Extensions.Logging;
+using UnityEngine.SceneManagement;
+using VContainer.Unity;
 
-namespace Boot
+namespace PrismaFramework.GameLauncher.Boot
 {
     // 演示事件定义
     public class GameEvent { }

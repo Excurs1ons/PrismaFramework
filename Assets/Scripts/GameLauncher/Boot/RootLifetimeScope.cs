@@ -1,11 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using GameLauncher.Boot;
+using MessagePipe;
+using Microsoft.Extensions.Logging;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using ZLogger.Unity;
-using MessagePipe;
-using MessagePipe.VContainer;
-namespace GameLauncher.Boot
+
+namespace PrismaFramework.GameLauncher.Boot
 {
     public class RootLifetimeScope : LifetimeScope
     {
