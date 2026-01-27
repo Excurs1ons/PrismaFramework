@@ -1,6 +1,4 @@
-﻿using PrismaFramework.GameLauncher.Localization;
-
-namespace PrismaFramework.GameLauncher.UI
+﻿namespace PrismaFramework.GameLauncher.Localization
 {
     public interface ILocalizationService
     {

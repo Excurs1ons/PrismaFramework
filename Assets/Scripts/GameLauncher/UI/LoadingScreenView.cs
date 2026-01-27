@@ -1,4 +1,5 @@
 ﻿using PrismaFramework.GameLauncher.Infrastructure.Interfaces;
+using PrismaFramework.GameLauncher.Localization;
 using R3;
 using TMPro;
 using UnityEngine;

@@ -4,11 +4,7 @@ namespace PrismaFramework.GameLauncher.Localization
 {
     public class LocalizationTextAttribute : Attribute
     {
-        public readonly string text;
-
-        public LocalizationTextAttribute(string text)
-        {
-            this.text = text;
-        }
+        public string Text { get; }
+        public LocalizationTextAttribute(string text) => Text = text;
     }
 }
