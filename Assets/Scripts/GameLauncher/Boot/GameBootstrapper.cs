@@ -11,8 +11,15 @@ using VContainer.Unity;
 namespace PrismaFramework.GameLauncher.Boot
 {
     // 演示事件定义
-    public class GameEvent { }
-    public class PlayerEvent { public int Id; public string Name; }
+    public class GameEvent
+    {
+    }
+
+    public class PlayerEvent
+    {
+        public int Id;
+        public string Name;
+    }
 
     [UsedImplicitly]
     public class GameBootstrapper : IAsyncStartable
@@ -21,7 +28,7 @@ namespace PrismaFramework.GameLauncher.Boot
 
         private readonly LifetimeScope _rootScope;
         private readonly IAssetProvider _assetProvider;
-        
+
         private readonly ISubscriber<GameEvent> _gameEventSub;
         private readonly ISubscriber<PlayerEvent> _playerEventSub;
         private readonly IPublisher<GameEvent> _gameEventPub;
@@ -38,12 +45,11 @@ namespace PrismaFramework.GameLauncher.Boot
             IPublisher<GameEvent> gameEventPub,
             IPublisher<PlayerEvent> playerEventPub)
         {
-            
             _logger = loggerFactory.CreateLogger<GameBootstrapper>();
-            
+
             _rootScope = scope;
             _assetProvider = assetProvider;
-            
+
             _gameEventSub = gameEventSub;
             _playerEventSub = playerEventSub;
             _gameEventPub = gameEventPub;
@@ -53,7 +59,8 @@ namespace PrismaFramework.GameLauncher.Boot
             // === MessagePipe: 订阅事件 ===
             // 类型安全的事件总线，替代 C# 委托/事件，支持过滤和异步处理
             _gameEventSub.Subscribe(e => _logger.LogInformation("收到 GameEvent")).AddTo(_disposables);
-            _playerEventSub.Subscribe(e => _logger.LogInformation("收到 PlayerEvent: Id={Id}, Name={Name}", e.Id, e.Name)).AddTo(_disposables);
+            _playerEventSub.Subscribe(e => _logger.LogInformation("收到 PlayerEvent: Id={Id}, Name={Name}", e.Id, e.Name))
+                .AddTo(_disposables);
         }
 
         public async UniTask StartAsync(CancellationToken cancellation)
@@ -90,16 +97,10 @@ namespace PrismaFramework.GameLauncher.Boot
                 _logger.LogInformation("{i}...", i);
                 await UniTask.Delay(1000, cancellationToken: cancellation);
             }
-
-
-#if UNITY_EDITOR
-            // --- 编辑器模式：直接调用 ---
-            // 此时不需要加载 DLL，因为 GameMain 已经在当前的内存域里了
             await SceneManager.LoadSceneAsync(1).ToUniTask(cancellationToken: cancellation);
-            GameMain.Entry.Start(_rootScope);
-#else
-            // --- 运行时模式：加载 DLL ---
-#endif
+
+            var entry = GameEntryResolver.Resolve();
+            await entry.StartAsync(cancellation);
         }
 
         private async UniTask DemoUniTask(CancellationToken cancellationToken)

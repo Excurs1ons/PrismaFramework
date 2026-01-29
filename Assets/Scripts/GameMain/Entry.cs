@@ -1,14 +1,15 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using PrismaFramework.GameLauncher.Infrastructure.Interfaces;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
 namespace PrismaFramework.GameMain
 {
-    public static class Entry
+    public class Entry : IGameEntry
     {
-        public static void Start(LifetimeScope parentResolver)
+        public void Start(LifetimeScope parentResolver)
         {
             // 1. 转换传过来的 AOT 容器
             var parent = parentResolver;
@@ -25,6 +26,11 @@ namespace PrismaFramework.GameMain
             }
             
             Debug.Log("<color=cyan>[Prisma.Main]</color> VContainer 业务容器已下钻完成。");
+        }
+
+        public UniTask StartAsync(CancellationToken cancellation)
+        {
+            return UniTask.CompletedTask;
         }
     }
 }
