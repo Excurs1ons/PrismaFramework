@@ -15,6 +15,7 @@
     }
   ],
   "dependencies": {
+    "com.cysharp.zlinq": "1.5.4",
     "com.browar.editor-toolbox": "0.14.3",
     "com.code-philosophy.hybridclr": "8.9.0",
     "com.code-philosophy.luban": "1.1.1",

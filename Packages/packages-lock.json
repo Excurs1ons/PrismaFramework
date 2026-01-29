@@ -60,6 +60,13 @@
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
+    "com.cysharp.zlinq": {
+      "version": "1.5.4",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
     "com.cysharp.zlogger": {
       "version": "2.5.10",
       "depth": 0,
