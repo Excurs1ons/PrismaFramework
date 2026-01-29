@@ -1,18 +1,28 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
-using PrismaFramework.GameMain.UI;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace PrismaFramework.GameLauncher.UI
+namespace PrismaFramework.GameMain.UI
 {
     public class UIService : IUIService
     {
-        //虽然我们叫它“栈”（Stack），但在游戏 UI 管理中，它并不总是遵循 LIFO (Last In, First Out) 原则。
-        // 【新增】UI 栈，记录打开顺序
+        // 虽然叫它“栈”（Stack），但它并不总是遵循后进先出原则，并且会发生非线性的调用，因此使用链表
+        // UI 栈，记录打开顺序
         private readonly LinkedList<UIWindow> _windowStack = new();
         private readonly Dictionary<int, UIWindow> _allWindows = new();
+
+        public async UniTask StartAsync(CancellationToken cancellation)
+        {
+            await LoadEssentialsAssets();
+        }
+
+        private async UniTask LoadEssentialsAssets()
+        {
+            // await 
+        }
 
         public async UniTask<T> OpenAsync<T>(object args = null) where T : UIWindow
         {
@@ -49,11 +59,6 @@ namespace PrismaFramework.GameLauncher.UI
 
                 _allWindows.Remove(instanceId);
             }
-        }
-
-        public UniTask StartAsync(CancellationToken cancellation)
-        {
-            return UniTask.CompletedTask;
         }
 
         public void Dispose()
