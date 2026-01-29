@@ -6,13 +6,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace PrismaFramework.GameLauncher.UI
+namespace PrismaFramework.GameMain.UI
 {
-    public class LoadingScreenView : MonoBehaviour
+    public class LoadingScreenView : UIWindow
     {
         [SerializeField] private Slider _progressBar;
         [SerializeField] private TMP_Text _statusText;
-        
+
         [Inject] // VContainer 属性注入
         public void Construct(IDownloadService downloadService, ILocalizationService locService)
         {

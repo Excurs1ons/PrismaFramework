@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using PrismaFramework.GameLauncher.Localization;
-using PrismaFramework.GameLauncher.UI;
 using R3;
 
 namespace PrismaFramework.GameLauncher.Mock

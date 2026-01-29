@@ -1,4 +1,5 @@
-﻿using R3;
+﻿using PrismaFramework.GameLauncher.Infrastructure.Interfaces;
+using R3;
 
 namespace PrismaFramework.GameLauncher.Localization
 {
