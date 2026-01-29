@@ -27,8 +27,4 @@ namespace PrismaFramework.GameMain
             Debug.Log("<color=cyan>[Prisma.Main]</color> VContainer 业务容器已下钻完成。");
         }
     }
-
-    public class MainLifetimeScope : LifetimeScope
-    {
-    }
 }

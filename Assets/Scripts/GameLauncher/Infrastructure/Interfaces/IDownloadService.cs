@@ -4,7 +4,7 @@ using R3;
 
 namespace PrismaFramework.GameLauncher.Infrastructure.Interfaces
 {
-    public interface IDownloadService
+    public interface IDownloadService:IGameService
     {
         // 0.0 ~ 1.0 的进度流 (UI 只需要订阅这个)
         ReadOnlyReactiveProperty<float> Progress { get; }

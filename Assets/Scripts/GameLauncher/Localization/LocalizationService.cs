@@ -1,8 +1,9 @@
 ﻿using System;
-using PrismaFramework.GameLauncher.Localization;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using R3;
 
-namespace PrismaFramework.GameLauncher.UI
+namespace PrismaFramework.GameLauncher.Localization
 {
     public class LocalizationService : ILocalizationService
     {
@@ -22,6 +23,21 @@ namespace PrismaFramework.GameLauncher.UI
         public string GetText(LocalizedData data)
         {
             throw new NotImplementedException();
+        }
+
+        public void Start()
+        {
+            
+        }
+
+        public void Dispose()
+        {
+            
+        }
+
+        public UniTask StartAsync(CancellationToken cancellation)
+        {
+            return UniTask.CompletedTask;
         }
     }
 }

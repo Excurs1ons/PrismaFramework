@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using PrismaFramework.GameLauncher.Localization;
 using PrismaFramework.GameLauncher.UI;
 using R3;
@@ -54,6 +56,21 @@ namespace PrismaFramework.GameLauncher.Mock
         public string GetText(LocalizedData data)
         {
             return GetText(data.Key, data.Args);
+        }
+
+        public void Start()
+        {
+            
+        }
+
+        public void Dispose()
+        {
+            
+        }
+
+        public UniTask StartAsync(CancellationToken cancellation)
+        {
+            return UniTask.CompletedTask;
         }
     }
 }

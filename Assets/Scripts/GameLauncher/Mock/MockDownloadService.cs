@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks;
 using PrismaFramework.GameLauncher.Infrastructure.Interfaces;
 using PrismaFramework.GameLauncher.Localization;
 using R3;
@@ -54,6 +55,16 @@ namespace PrismaFramework.GameLauncher.Mock
             _stateDescription.Value.Set(LocalizationKey.ResourceDownloaded);
             // 再停顿一下让玩家看清 100%
             await UniTask.Delay(500);
+        }
+
+        public UniTask StartAsync(CancellationToken cancellation)
+        {
+            return UniTask.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+
         }
     }
 }
