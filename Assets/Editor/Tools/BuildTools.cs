@@ -16,7 +16,7 @@ public static class BuildTools
         //获取构建模式
         var mode = EditorUserBuildSettings.development ? "Development" : "Release";
         var buildPath =
-            $"{Application.dataPath}/../Build/{target}/{mode}/{GetBuildFileName()}/{GetBuildDirName()}.{GetExecutableFileExt()}";
+            $"{Application.dataPath}/../Build/{target}/{mode}/{GetBuildDirName()}/{GetBuildFileName()}.{GetExecutableFileExt()}";
         sb.AppendFormat("正在构建：{0}/{1}，路径为：{2}", target, mode, buildPath);
         Debug.Log(sb.ToString());
         return buildPath;
