@@ -1,13 +1,14 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Cysharp.Text;
 using UnityEditor;
 using UnityEngine;
 
 namespace PrismaFramework.Editor.Tools;
 
-public class BuildTools
+public static class BuildTools
 {
-    public static string GetBuildPath()
+    private static string GetBuildPath()
     {
         var sb = ZString.CreateStringBuilder();
         //获取构建目标
@@ -15,20 +16,35 @@ public class BuildTools
         //获取构建模式
         var mode = EditorUserBuildSettings.development ? "Development" : "Release";
         var buildPath =
-            $"{Application.dataPath}/../Build/{target}/{mode}/{GetBuildFileName()}/{GetBuildFileName()}.{GetBuildFileExt()}";
+            $"{Application.dataPath}/../Build/{target}/{mode}/{GetBuildFileName()}/{GetBuildDirName()}.{GetExecutableFileExt()}";
         sb.AppendFormat("正在构建：{0}/{1}，路径为：{2}", target, mode, buildPath);
         Debug.Log(sb.ToString());
         return buildPath;
     }
 
-    private static string GetBuildFileName()
+    private static string GetExecutableFileExt()
     {
-        return $"{Application.productName}_{Application.version}";
+        var target = EditorUserBuildSettings.activeBuildTarget;
+        switch (target)
+        {
+            case BuildTarget.StandaloneWindows64:
+            case BuildTarget.StandaloneWindows:
+                return "exe";
+            case BuildTarget.Android:
+                return "apk";
+            default:
+                Debug.LogErrorFormat("不支持的构建目标:{0}",target);
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
-    private static string GetBuildFileExt()
+    private static string GetBuildDirName()
     {
-        return "exe";
+        return GetBuildFileName() + "_" + Application.version;
+    }
+    private static string GetBuildFileName()
+    {
+        return $"{Application.productName}";
     }
 
     [MenuItem("Build/Quick Build")]
