@@ -24,6 +24,7 @@ namespace PrismaFramework.GameLauncher.Boot
     }
 
     [UsedImplicitly]
+    [Preserve]
     public class GameBootstrapper : IAsyncStartable
     {
         public static readonly ILogger Logger = LoggerFactory.Create(ConfigureLogger).CreateLogger<GameBootstrapper>();
@@ -45,8 +46,10 @@ namespace PrismaFramework.GameLauncher.Boot
 
         // === VContainer: 依赖注入 ===
         // 解耦组件依赖，便于测试和维护
+        [Preserve]
+        [UsedImplicitly]
         public GameBootstrapper(LifetimeScope scope,
-            IAssetProvider assetProvider,
+            //IAssetProvider assetProvider,
             //ILoggerFactory loggerFactory,
             ISubscriber<GameEvent> gameEventSub,
             ISubscriber<PlayerEvent> playerEventSub,
@@ -54,7 +57,7 @@ namespace PrismaFramework.GameLauncher.Boot
             IPublisher<PlayerEvent> playerEventPub)
         {
             _rootScope = scope;
-            _assetProvider = assetProvider;
+            //_assetProvider = assetProvider;
 
             _gameEventSub = gameEventSub;
             _playerEventSub = playerEventSub;

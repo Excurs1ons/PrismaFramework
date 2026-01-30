@@ -2,6 +2,7 @@
 using System.IO;
 using Cysharp.Text;
 using UnityEditor;
+using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 
 namespace PrismaFramework.Editor.Tools;
@@ -48,7 +49,16 @@ public static class BuildTool
         return $"{Application.productName}";
     }
 
-    [MenuItem("Build/Quick Build")]
+    [MenuItem("Build/Full Build",priority = 0)]
+    public static void BuildWithHotfixDll()
+    {
+        //预构建
+        HybridCLR.Editor.Commands.PrebuildCommand.GenerateAll();
+        BuildAssets();
+        Build();
+    }
+
+    [MenuItem("Build/Build Player",priority = 1)]
     public static void Build()
     {
         var buildPath = GetBuildPath();
@@ -60,5 +70,19 @@ public static class BuildTool
 
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPath, EditorUserBuildSettings.activeBuildTarget,
             options);
+    }
+
+    [MenuItem("Build/Build Assets", priority = 2)]
+    public static void BuildAssets()
+    {
+        Debug.Log("Start Build Addressables Content...");
+        AddressableAssetSettings.BuildPlayerContent();
+        Debug.Log("Build Addressables Content Finish.");
+    }
+
+    [MenuItem("Build/Build Hotfix Dll",priority = 3)]
+    public static void BuildHotfixDll()
+    {
+        
     }
 }

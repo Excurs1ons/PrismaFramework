@@ -24,7 +24,7 @@ namespace PrismaFramework.GameLauncher.Boot
             // 2. 使用 .As() 告诉容器它实现了 ILogger<> 接口
             // builder.Register(typeof(Logger<>), Lifetime.Singleton).As(typeof(ILogger<>));
 
-            builder.Register<IAssetProvider, AddressablesProvider>(Lifetime.Singleton);
+            // builder.Register<IAssetProvider, AddressablesProvider>(Lifetime.Singleton);
             // === 游戏启动入口 ===
             builder.RegisterEntryPoint<GameBootstrapper>();
         }
