@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Cysharp.Text;
+using PrismaFramework.GameLauncher;
 using UnityEditor;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
@@ -9,6 +10,7 @@ namespace PrismaFramework.Editor.Tools;
 
 public static class BuildTool
 {
+
     private static string GetBuildPath()
     {
         var sb = ZString.CreateStringBuilder();
@@ -54,6 +56,7 @@ public static class BuildTool
     {
         //预构建
         HybridCLR.Editor.Commands.PrebuildCommand.GenerateAll();
+        BuildHotfixDll();
         BuildAssets();
         Build();
     }
@@ -83,6 +86,27 @@ public static class BuildTool
     [MenuItem("Build/Build Hotfix Dll",priority = 3)]
     public static void BuildHotfixDll()
     {
+        var target = EditorUserBuildSettings.activeBuildTarget;
+        string hotfixDllSrcDir = HybridCLR.Editor.SettingsUtil.GetHotUpdateDllsOutputDirByTarget(target);
+        string hotfixDllDstDir = Application.streamingAssetsPath;
         
+        if (!Directory.Exists(hotfixDllDstDir))
+        {
+            Directory.CreateDirectory(hotfixDllDstDir);
+        }
+        
+        
+        string srcPath = Path.Combine(hotfixDllSrcDir, GlobalDefinitions.MAIN_DLL_NAME);
+        string dstPath = Path.Combine(hotfixDllDstDir, GlobalDefinitions.MAIN_DLL_NAME + ".bytes");
+        
+        if (File.Exists(srcPath))
+        {
+            File.Copy(srcPath, dstPath, true);
+            Debug.Log($"[BuildHotfixDll] Copied {srcPath} to {dstPath}");
+        }
+        else
+        {
+            Debug.LogError($"[BuildHotfixDll] Source DLL not found: {srcPath}");
+        }
     }
 }

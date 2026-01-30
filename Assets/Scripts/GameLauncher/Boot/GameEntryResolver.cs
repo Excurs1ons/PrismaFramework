@@ -66,7 +66,7 @@ namespace PrismaFramework.GameLauncher.Boot
             [Preserve]
             static string GetHotfixDllPath()
             {
-                var path = Path.Combine(Application.streamingAssetsPath, "GameMain.dll");
+                var path = Path.Combine(Application.streamingAssetsPath, GlobalDefinitions.MAIN_DLL_NAME + ".bytes");
                 if (!File.Exists(path))
                 {
                     throw new FileNotFoundException($"Hotfix assembly not found at {path}");
