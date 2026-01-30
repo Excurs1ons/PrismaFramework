@@ -8,18 +8,15 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace PrismaFramework.GameLauncher.Boot
 {
-    [UsedImplicitly]
     public class AddressablesProvider : IAssetProvider
     {
-        private readonly ILogger<AddressablesProvider> _logger;
-
         // 简单的 Handle 缓存，防止句柄丢失导致的内存泄露
         // Key: 资源Key, Value: Handle
         private readonly Dictionary<string, AsyncOperationHandle> _handles = new();
 
         public async UniTask InitializeAsync()
         {
-            _logger.LogInformation("Initializing Addressables...");
+            GameBootstrapper.Logger.LogInformation("Initializing Addressables...");
             await Addressables.InitializeAsync().ToUniTask();
         }
 
@@ -39,7 +36,7 @@ namespace PrismaFramework.GameLauncher.Boot
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "Failed to load asset: {0}", key);
+                GameBootstrapper.Logger.LogError(ex, "Failed to load asset: {0}", key);
                 throw;
             }
         }

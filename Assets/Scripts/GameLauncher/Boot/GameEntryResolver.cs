@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 #if !UNITY_EDITOR
 using System.IO;
 #endif
@@ -8,8 +9,11 @@ using System.Reflection;
 using System.Threading;
 using Cysharp.Text;
 using Cysharp.Threading.Tasks;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using PrismaFramework.GameLauncher.Infrastructure.Interfaces;
+using UnityEngine;
+using VContainer;
 using ZLogger;
 
 namespace PrismaFramework.GameLauncher.Boot
@@ -58,11 +62,17 @@ namespace PrismaFramework.GameLauncher.Boot
             }
             return asm;
 #endif
-        }
-
-        private static string GetHotfixDllPath()
-        {
-            return "";
+            [UsedImplicitly]
+            [Preserve]
+            static string GetHotfixDllPath()
+            {
+                var path = Path.Combine(Application.streamingAssetsPath, "GameMain.dll");
+                if (!File.Exists(path))
+                {
+                    throw new FileNotFoundException($"Hotfix assembly not found at {path}");
+                }
+                return path;
+            }
         }
     }
 }

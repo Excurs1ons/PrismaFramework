@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace PrismaFramework.Editor.Tools;
 
-public static class BuildTools
+public static class BuildTool
 {
     private static string GetBuildPath()
     {
@@ -33,7 +33,7 @@ public static class BuildTools
             case BuildTarget.Android:
                 return "apk";
             default:
-                Debug.LogErrorFormat("不支持的构建目标:{0}",target);
+                Debug.LogErrorFormat("不支持的构建目标:{0}", target);
                 throw new ArgumentOutOfRangeException();
         }
     }
@@ -42,6 +42,7 @@ public static class BuildTools
     {
         return GetBuildFileName() + "_" + Application.version;
     }
+
     private static string GetBuildFileName()
     {
         return $"{Application.productName}";
@@ -51,7 +52,13 @@ public static class BuildTools
     public static void Build()
     {
         var buildPath = GetBuildPath();
+        var options = BuildOptions.None;
+        if (EditorUserBuildSettings.development)
+        {
+            options |= BuildOptions.Development;
+        }
+
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPath, EditorUserBuildSettings.activeBuildTarget,
-            BuildOptions.None);
+            options);
     }
 }
