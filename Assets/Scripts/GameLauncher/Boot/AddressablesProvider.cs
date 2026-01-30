@@ -17,11 +17,6 @@ namespace PrismaFramework.GameLauncher.Boot
         // Key: 资源Key, Value: Handle
         private readonly Dictionary<string, AsyncOperationHandle> _handles = new();
 
-        public AddressablesProvider(ILogger<AddressablesProvider> logger)
-        {
-            _logger = logger;
-        }
-
         public async UniTask InitializeAsync()
         {
             _logger.LogInformation("Initializing Addressables...");

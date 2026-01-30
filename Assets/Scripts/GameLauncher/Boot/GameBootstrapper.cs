@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
+using ZLogger;
+using ZLogger.Unity;
 
 namespace PrismaFramework.GameLauncher.Boot
 {
@@ -24,7 +26,7 @@ namespace PrismaFramework.GameLauncher.Boot
     [UsedImplicitly]
     public class GameBootstrapper : IAsyncStartable
     {
-        private readonly ILogger _logger;
+        public static readonly ILogger Logger = LoggerFactory.Create(ConfigureLogger).CreateLogger<GameBootstrapper>();
 
         private readonly LifetimeScope _rootScope;
         private readonly IAssetProvider _assetProvider;
@@ -35,18 +37,22 @@ namespace PrismaFramework.GameLauncher.Boot
         private readonly IPublisher<PlayerEvent> _playerEventPub;
         private readonly DisposableBagBuilder _disposables;
 
+        private static void ConfigureLogger(ILoggingBuilder logging)
+        {
+            logging.SetMinimumLevel(LogLevel.Trace);
+            logging.AddZLoggerUnityDebug();
+        }
+
         // === VContainer: 依赖注入 ===
         // 解耦组件依赖，便于测试和维护
         public GameBootstrapper(LifetimeScope scope,
             IAssetProvider assetProvider,
-            ILoggerFactory loggerFactory,
+            //ILoggerFactory loggerFactory,
             ISubscriber<GameEvent> gameEventSub,
             ISubscriber<PlayerEvent> playerEventSub,
             IPublisher<GameEvent> gameEventPub,
             IPublisher<PlayerEvent> playerEventPub)
         {
-            _logger = loggerFactory.CreateLogger<GameBootstrapper>();
-
             _rootScope = scope;
             _assetProvider = assetProvider;
 
@@ -58,8 +64,8 @@ namespace PrismaFramework.GameLauncher.Boot
 
             // === MessagePipe: 订阅事件 ===
             // 类型安全的事件总线，替代 C# 委托/事件，支持过滤和异步处理
-            _gameEventSub.Subscribe(e => _logger.LogInformation("收到 GameEvent")).AddTo(_disposables);
-            _playerEventSub.Subscribe(e => _logger.LogInformation("收到 PlayerEvent: Id={Id}, Name={Name}", e.Id, e.Name))
+            _gameEventSub.Subscribe(e => Logger.LogInformation("收到 GameEvent")).AddTo(_disposables);
+            _playerEventSub.Subscribe(e => Logger.LogInformation("收到 PlayerEvent: Id={Id}, Name={Name}", e.Id, e.Name))
                 .AddTo(_disposables);
         }
 
@@ -67,7 +73,7 @@ namespace PrismaFramework.GameLauncher.Boot
         {
             // === ZLogger: 结构化日志 ===
             // 零分配、高性能，支持结构化日志输出
-            _logger.LogInformation("=== PrismaFramework ===");
+            Logger.LogInformation("=== PrismaFramework ===");
 
             // === UniTask: 异步操作 ===
             // 为什么: 替代 Coroutine，提供真正的 async/await 体验，性能更好
@@ -82,25 +88,28 @@ namespace PrismaFramework.GameLauncher.Boot
             using (var sb = ZString.CreateStringBuilder())
             {
                 sb.AppendFormat("玩家 {0} 进入游戏，等级 {1}", "Player1", 10);
-                _logger.LogInformation(sb.ToString());
+                Logger.LogInformation(sb.ToString());
             }
 
             // === ULID: 唯一标识符 ===
             // 为什么: 有序且唯一的 ID，替代 GUID，更适合分布式系统
             var playerId = System.Ulid.NewUlid();
-            _logger.LogInformation("生成玩家 ULID: {Ulid}", playerId.ToString());
+            Logger.LogInformation("生成玩家 ULID: {Ulid}", playerId.ToString());
 
             // === UniTask: 倒数 3 秒 ===
-            _logger.LogInformation("所有系统初始化完毕，3 秒后进入游戏主场景...");
+            Logger.LogInformation("所有系统初始化完毕，3 秒后进入游戏主场景...");
             for (int i = 3; i > 0; i--)
             {
-                _logger.LogInformation("{i}...", i);
+                Logger.LogInformation("{i}...", i);
                 await UniTask.Delay(1000, cancellationToken: cancellation);
             }
+
             await SceneManager.LoadSceneAsync(1).ToUniTask(cancellationToken: cancellation);
 
+            Logger.ZLogInformation($"计算结果: {0} + {1} = {2}");
             var entry = GameEntryResolver.Resolve();
             await entry.StartAsync(cancellation);
+            Logger.LogInformation("游戏启动完毕");
         }
 
         private async UniTask DemoUniTask(CancellationToken cancellationToken)
